@@ -288,7 +288,7 @@ Your app will be live at `https://your-app-name.streamlit.app`
 
 ## 🎬 Demo
 
-> **📺 [Watch the full demo on YouTube](https://youtu.be/-kLH6ttlEMk)**
+> **📺 [Watch the full demo on YouTube](https://youtu.be/ZBAwq79opZk)**
 
 The dashboard includes 5 analysis views:
 
