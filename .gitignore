@@ -1,0 +1,145 @@
+# ═══════════════════════════════════════════════════════════════
+#  Sentiment Radar — .gitignore
+# ═══════════════════════════════════════════════════════════════
+
+
+# ── Virtual environments ──────────────────────────────────────
+sent/
+venv/
+env/
+.venv/
+.env/
+ENV/
+venv.bak/
+
+
+# ── Environment & secrets — NEVER commit these ────────────────
+.env
+*.env
+!.env.example
+.streamlit/secrets.toml
+
+
+# ── Model files (~68 MB) ─────────────────────────────────────
+# To deploy: either remove these 2 lines and commit directly,
+# or use Git LFS (see README Step 1)
+model_files/*.keras
+model_files/*.joblib
+
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+.eggs/
+*.so
+
+
+# ── Jupyter notebooks ─────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+profile_default/
+ipython_config.py
+
+
+# ── Testing & coverage ────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+nosetests.xml
+test-results/
+
+
+# ── Type checking ─────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+
+# ── OS generated ──────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+
+# ── IDEs & editors ────────────────────────────────────────────
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+pip-log.txt
+pip-delete-this-directory.txt
+
+
+# ── Django (legacy — from original project) ───────────────────
+*.sqlite3
+db.sqlite3
+db.sqlite3-journal
+local_settings.py
+staticfiles/
+media/
+
+
+# ── Temporary & cache files ───────────────────────────────────
+*.tmp
+*.temp
+*.bak
+*.swp
+.cache/
+tmp/
+
+
+# ── Assets — keep demo gif/video but not raw recordings ───────
+assets/raw/
+assets/*.mp4
+assets/*.mov
+assets/*.avi
+
+
+# ── NLTK data is intentionally committed ─────────────────────
+# so Streamlit Cloud doesn't need to download it at startup.
+# Do NOT add nltk_data/ here.
+
+
+# ── Package managers ──────────────────────────────────────────
+node_modules/
+.npm
+.yarn/

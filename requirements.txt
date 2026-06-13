@@ -1,0 +1,29 @@
+# ═══════════════════════════════════════════════════════════════
+# Sentiment Radar — requirements.txt
+# Platform : Linux / Streamlit Community Cloud
+# Python   : 3.10
+#
+# For Windows local dev use: requirements-windows.txt
+# ═══════════════════════════════════════════════════════════════
+
+# ── Deep Learning ─────────────────────────────────────────────
+tensorflow-cpu==2.17.1      # CPU-only build — lighter, works on Streamlit Cloud
+tf-keras==2.17.0            # Legacy Keras 2 API — required to load H5 model
+
+# ── Numerical ─────────────────────────────────────────────────
+numpy>=1.23.5,<2.0.0        # TF 2.17 compatible range
+joblib>=1.2.0               # Model artifact loading
+
+# ── ML / Encoding ─────────────────────────────────────────────
+scikit-learn>=1.2.0         # LabelEncoder (encoderB.joblib)
+
+# ── NLP ───────────────────────────────────────────────────────
+nltk>=3.8.0                 # Stopwords corpus
+
+# ── Dashboard ─────────────────────────────────────────────────
+streamlit>=1.32.0
+pandas>=1.5.0,<3.0.0
+plotly>=5.18.0
+
+# ── Utilities ─────────────────────────────────────────────────
+python-dotenv>=1.0.0        # .env file loading

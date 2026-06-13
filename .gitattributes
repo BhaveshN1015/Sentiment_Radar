@@ -1,0 +1,49 @@
+# ═══════════════════════════════════════════════════════════════
+# .gitattributes — Sentiment Radar
+# Forces consistent line endings across Windows/Linux/Mac
+# Eliminates all "LF will be replaced by CRLF" warnings
+# ═══════════════════════════════════════════════════════════════
+
+# Default: normalize all text files to LF in repo
+* text=auto eol=lf
+
+# Python source files — always LF
+*.py text eol=lf
+
+# Config / data files — always LF
+*.txt      text eol=lf
+*.md       text eol=lf
+*.toml     text eol=lf
+*.yaml     text eol=lf
+*.yml      text eol=lf
+*.json     text eol=lf
+*.sh       text eol=lf
+*.cfg      text eol=lf
+*.ini      text eol=lf
+*.env      text eol=lf
+*.example  text eol=lf
+
+# NLTK data files — LF
+*.txt      text eol=lf
+*.tab      text eol=lf
+*.pickle   binary
+README     text eol=lf
+
+# Model/binary files — no line ending conversion
+*.keras    binary
+*.joblib   binary
+*.h5       binary
+*.pkl      binary
+*.npy      binary
+*.npz      binary
+
+# Image/media files — binary
+*.png      binary
+*.jpg      binary
+*.jpeg     binary
+*.gif      binary
+*.ico      binary
+*.svg      text eol=lf
+*.mp4      binary
+*.mov      binary
+*.avi      binary

@@ -1,0 +1,15 @@
+[theme]
+base = "dark"
+backgroundColor = "#0a0a0f"
+secondaryBackgroundColor = "#13131f"
+textColor = "#e8e8f0"
+primaryColor = "#7c3aed"
+font = "sans serif"
+
+[server]
+headless = true
+# Note: enableCORS and enableXsrfProtection can't both be false/true together.
+# Leaving these at defaults avoids the startup warning.
+
+[browser]
+gatherUsageStats = false

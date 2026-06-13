@@ -1,0 +1,34 @@
+# ═══════════════════════════════════════════════════════════════
+# Sentiment Radar — requirements-windows.txt
+# Platform : Windows (local development)
+# Python   : 3.10
+#
+# Difference from requirements.txt:
+#   tensorflow (full build) instead of tensorflow-cpu
+#   tensorflow-cpu has no Windows wheel on PyPI for 2.17.x
+#   The full build works on CPU even without a GPU.
+#
+# Install: pip install -r requirements-windows.txt
+# ═══════════════════════════════════════════════════════════════
+
+# ── Deep Learning ─────────────────────────────────────────────
+tensorflow==2.17.1          # Full Windows wheel (GPU-capable, CPU fallback)
+tf-keras==2.17.0            # Legacy Keras 2 API — required to load H5 model
+
+# ── Numerical ─────────────────────────────────────────────────
+numpy>=1.23.5,<2.0.0
+joblib>=1.2.0
+
+# ── ML / Encoding ─────────────────────────────────────────────
+scikit-learn>=1.2.0
+
+# ── NLP ───────────────────────────────────────────────────────
+nltk>=3.8.0
+
+# ── Dashboard ─────────────────────────────────────────────────
+streamlit>=1.32.0
+pandas>=1.5.0,<3.0.0
+plotly>=5.18.0
+
+# ── Utilities ─────────────────────────────────────────────────
+python-dotenv>=1.0.0
