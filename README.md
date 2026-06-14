@@ -4,7 +4,7 @@
 
 # Sentiment Radar
 
-**Real-time social media sentiment analysis powered by a custom BiLSTM + Self-Attention deep learning model**
+**On-demand social media sentiment analysis powered by a custom BiLSTM + Self-Attention deep learning model**
 
 [![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.17.1-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)](https://tensorflow.org)
@@ -13,12 +13,12 @@
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.2+-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
 [![License](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active-22c55e?style=flat-square)]()
+[![Accuracy](https://img.shields.io/badge/Test%20Accuracy-76.13%25-7c3aed?style=flat-square)]()
+[![Dataset](https://img.shields.io/badge/Training%20Data-2.86M%20Comments-38bdf8?style=flat-square)]()
 
-[**📺 Watch Demo**](https://youtu.be/YOUR_VIDEO_ID) · [**📊 Model Details**](#-model-architecture) · [**⚡ Quick Start**](#-quick-start)
+[**📺 Watch Demo**](https://youtu.be/ZBAwq79opZk) · [**📊 Model Details**](#-model-architecture) · [**⚡ Quick Start**](#-quick-start)
 
 <br/>
-
-![Demo GIF](assets/demo.gif)
 
 </div>
 
@@ -26,23 +26,23 @@
 
 ## 📌 Overview
 
-**Sentiment Radar** is an end-to-end NLP system that scrapes comments from multiple social media platforms on any topic you choose, classifies each comment as **positive**, **neutral**, or **negative** using a custom-trained deep learning model, and presents the results in an interactive dark-theme dashboard with rich visualisations.
+**Sentiment Radar** is an end-to-end NLP system that scrapes comments from multiple social media platforms on any topic, classifies each comment as **positive**, **neutral**, or **negative** using a custom-trained deep learning model, and presents results in an interactive dark-theme dashboard with rich visualisations.
 
-Unlike generic sentiment APIs, this model was trained specifically on social media language — handling slang, negation (`"not bad"` → positive), sarcasm markers, and informal text that breaks most off-the-shelf classifiers.
+Unlike generic sentiment APIs, this model was trained specifically on social media language — handling slang, negation (`"not bad"` → positive), sarcasm markers, and informal text that breaks most off-the-shelf classifiers. The system is **on-demand** — every analysis is triggered manually by searching a topic, fetching a fresh batch of comments across platforms.
 
 ### What it does
 
 - 🔍 **Scrapes on demand** — enter any topic, fetch up to 50 comments per platform in seconds
-- 🧠 **Classifies with a custom model** — BiLSTM + Self-Attention trained on 6 social media datasets
+- 🧠 **Classifies with a custom model** — BiLSTM + Self-Attention trained on 2.86M comments from 6 datasets
 - 📊 **Visualises everything** — donut charts, platform radar, sentiment gap bars, confidence histograms
-- 💬 **Shows raw comments** — filterable by platform and sentiment with confidence scores
+- 💬 **Shows raw comments** — filterable by platform and sentiment with confidence scores per prediction
 - 📥 **Exports results** — download full analysis as CSV
 
 ### Platforms supported
 
 | Platform | Auth required | Status |
 |---|---|---|
-| Reddit | Optional (OAuth improves results) | ✅ Active |
+| Reddit | Optional (OAuth improves freshness) | ✅ Active |
 | HackerNews | None | ✅ Active |
 | Dev.to | None | ✅ Active |
 | YouTube | Free API key | ✅ Optional |
@@ -69,22 +69,24 @@ Unlike generic sentiment APIs, this model was trained specifically on social med
 └──────────────────────┴──────────────────────┴───────────────────────┘
 ```
 
-### 🧠 Model Architecture
+---
 
-The core model is a **Bidirectional LSTM with Self-Attention and dual pooling**, trained from scratch on 1.8M+ social media comments aggregated from 6 datasets.
+## 🧠 Model Architecture
+
+The core model is a **Bidirectional LSTM with Self-Attention and dual pooling**, trained from scratch on **2.86M social media comments** aggregated from 6 datasets.
 
 ```
 Input (seq_len=100)
         │
         ▼
-Embedding Layer (vocab=20,000 · dim=128)
+Embedding Layer (vocab=20,000 · dim=128)  →  2,560,000 params
         │
 SpatialDropout1D(0.3)
         │
         ▼
-BiLSTM(128 units, return_sequences=True)
+BiLSTM(128 units, return_sequences=True)  →  263,168 params
         │
-BiLSTM(64 units, return_sequences=True)
+BiLSTM(64 units, return_sequences=True)   →  164,352 params
         │
         ▼
 Self-Attention Layer
@@ -96,71 +98,106 @@ GlobalAvg  GlobalMax
    └────┬────┘
         │ Concat
         ▼
-  Dense(128, ReLU, L2)
-  Dropout(0.5)
-  Dense(64, ReLU)
-  Dropout(0.3)
+  Dense(128, ReLU, L2) → Dropout(0.5)
+  Dense(64,  ReLU)     → Dropout(0.3)
         │
         ▼
   Dense(3, Softmax)
   [negative · neutral · positive]
+
+  Total parameters: ~3,000,000
 ```
 
-| Property | Value |
+### 📊 Model Performance
+
+| Metric | Value |
 |---|---|
-| Training data | 1.8M+ comments (Twitter, Reddit, IMDB, Amazon, YouTube, HackerNews) |
-| Vocab size | 20,000 tokens |
-| Max sequence length | 100 tokens |
-| Negation handling | Custom `_NEG` suffix tagging (`"not good"` → `"not good_NEG"`) |
-| Confidence threshold | 50% (below → "uncertain") |
-| Saved format | Keras H5 (keras 2.10.0), loaded via tf-keras 2.17 |
+| **Test Accuracy** | **76.13%** |
+| Test Loss | 0.5634 |
+| Training Time | ~8,244 seconds |
+| Epochs | 12 |
+
+**Classification Report:**
+
+| Class | Precision | Recall | F1-Score | Support |
+|---|---|---|---|---|
+| Negative | 0.77 | 0.79 | 0.78 | 239,513 |
+| Neutral | 0.63 | 0.62 | 0.62 | 83,142 |
+| Positive | 0.80 | 0.78 | 0.79 | 249,108 |
+| **Weighted Avg** | **0.76** | **0.76** | **0.76** | 571,763 |
+
+> The neutral class underperforms (F1: 0.62) due to class imbalance — neutral samples (~410K) are significantly fewer than positive/negative (~1.2M+ each). This is a known challenge in social media sentiment datasets.
+
+### 📦 Training Data
+
+| Dataset | Source | Size |
+|---|---|---|
+| Sentiment140 | Twitter | ~1.6M |
+| Reddit Comments | Reddit | ~400K |
+| IMDB Reviews | IMDB | ~50K |
+| Amazon Reviews | Amazon | ~400K |
+| YouTube Comments | YouTube | ~250K |
+| HackerNews | HackerNews | ~160K |
+| **Total** | **6 sources** | **~2.86M** |
+
+**Class distribution:** Positive ~1.25M · Negative ~1.2M · Neutral ~0.41M
 
 ### 🔤 Preprocessing Pipeline
 
-A key innovation is the **negation scope tagging** — applied before tokenisation so the model learns that `good` and `good_NEG` are distinct signals:
+A key feature is the **negation scope tagging** — applied before tokenisation so the model learns `good` and `good_NEG` as distinct signals:
 
 ```
 Input:  "I didn't enjoy this at all."
   │
-  ├─ 1. Expand contractions  → "I did not enjoy this at all."
-  ├─ 2. Negation scope tag   → "I did not enjoy_NEG this_NEG at_NEG all_NEG."
-  ├─ 3. Strip non-alpha      → "I did not enjoy_NEG this_NEG at_NEG all_NEG"
-  └─ 4. Remove stopwords     → "not enjoy_NEG all_NEG"
-          (keeping: not, but, very, can, won't, etc.)
+  ├─ 1. Expand contractions  →  "I did not enjoy this at all."
+  ├─ 2. Negation scope tag   →  "I did not enjoy_NEG this_NEG at_NEG all_NEG."
+  ├─ 3. Strip non-alpha      →  "I did not enjoy_NEG this_NEG at_NEG all_NEG"
+  └─ 4. Remove stopwords     →  "not enjoy_NEG all_NEG"
+          (keeping: not, but, very, can, won't, never, etc.)
 
-Output: "not enjoy_NEG all_NEG"   → Predicted: NEGATIVE (98.9%)
+Output: "not enjoy_NEG all_NEG"   →  Predicted: NEGATIVE (98.93%)
 ```
+
+**Confidence examples from batch testing:**
+
+| Input | Prediction | Confidence |
+|---|---|---|
+| "This product is absolutely amazing!" | Positive | 91.22% |
+| "Worst experience I've ever had." | Negative | 98.57% |
+| "I never felt so happy in my life!" | Positive | 86.98% |
+| "I don't like this at all." | Negative | 87.22% |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-sentiment-radar/
+Sentiment_Radar/
 │
-├── streamlit_app.py            ← Main dashboard entry point
+├── streamlit_app.py              ← Main dashboard entry point
 │
 ├── app/
 │   ├── __init__.py
-│   ├── inference.py            ← Model loading, preprocessing, batched prediction
-│   └── scraper.py              ← Multi-platform comment scraper
+│   ├── inference.py              ← Model loading, preprocessing, batched prediction
+│   └── scraper.py                ← Multi-platform comment scraper
 │
-├── model_files/                ← Place your 3 model artifacts here
-│   ├── best_sentiment_model.keras
-│   ├── tokenizerB.joblib
-│   └── encoderB.joblib
+├── model_files/                  ← Place your 3 model artifacts here
+│   ├── best_sentiment_model.keras   (~35 MB)
+│   ├── tokenizerB.joblib            (~32 MB)
+│   └── encoderB.joblib              (~0.5 MB)
 │
-├── nltk_data/                  ← Pre-downloaded NLTK corpora (committed)
+├── nltk_data/                    ← Pre-downloaded NLTK corpora (committed)
 │
 ├── .streamlit/
-│   ├── config.toml             ← Dark theme configuration
-│   └── secrets.toml            ← API keys (gitignored — never committed)
+│   ├── config.toml               ← Dark theme configuration
+│   └── secrets.toml              ← API keys (gitignored — never committed)
 │
-├── requirements.txt            ← Linux / Streamlit Cloud dependencies
-├── requirements-windows.txt    ← Windows local dev dependencies
-├── setup.sh                    ← Pre-start script for Streamlit Cloud
-├── download_nltk.py            ← One-time NLTK data download
-├── .env.example                ← Environment variable template
+├── requirements.txt              ← Linux / Streamlit Cloud dependencies
+├── requirements-windows.txt      ← Windows local dev dependencies
+├── setup.sh                      ← Pre-start script for Streamlit Cloud
+├── download_nltk.py              ← One-time NLTK data download
+├── .env.example                  ← Environment variable template
+├── .gitattributes                ← Line ending configuration
 └── .gitignore
 ```
 
@@ -173,14 +210,14 @@ sentiment-radar/
 - Python 3.10
 - The 3 model files (`best_sentiment_model.keras`, `tokenizerB.joblib`, `encoderB.joblib`)
 
-### 1. Clone and set up
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/BhaveshN1015/sentiment-radar.git
-cd sentiment-radar
+git clone https://github.com/BhaveshN1015/Sentiment_Radar.git
+cd Sentiment_Radar
 ```
 
-### 2. Create virtual environment
+### 2. Create a virtual environment
 
 ```bash
 # Windows
@@ -217,18 +254,19 @@ model_files/
 
 ```bash
 copy .env.example .env      # Windows
-cp .env.example .env        # Mac/Linux
+cp .env.example .env        # Mac / Linux
 ```
 
-Edit `.env` and add your keys (all optional — app works without them):
+Edit `.env` and add your API keys (all optional — app works without them):
 
 ```env
 YOUTUBE_API_KEY=AIzaSy...          # Enables YouTube platform
 REDDIT_CLIENT_ID=abc123            # Improves Reddit results
 REDDIT_CLIENT_SECRET=xyz789
+REDDIT_USER_AGENT=SentimentRadar/1.0
 ```
 
-### 6. Run
+### 6. Run the app
 
 ```bash
 streamlit run streamlit_app.py
@@ -238,55 +276,7 @@ Open **http://localhost:8501** in your browser.
 
 ---
 
-## 🚀 Deploy to Streamlit Cloud (Free)
-
-### Step 1 — Push to GitHub
-
-Make sure your repo includes the model files. Two options:
-
-**Option A — Commit directly** (simplest, files are ~68 MB total, under GitHub's 100 MB limit):
-```bash
-# In .gitignore, comment out these two lines:
-# model_files/*.keras
-# model_files/*.joblib
-
-git add model_files/
-git commit -m "Add model files"
-git push
-```
-
-**Option B — Git LFS** (cleaner for large files):
-```bash
-git lfs install
-git lfs track "model_files/*.keras" "model_files/*.joblib"
-git add .gitattributes model_files/
-git commit -m "Add model files via LFS"
-git push
-```
-
-### Step 2 — Deploy on Streamlit Cloud
-
-1. Go to **[share.streamlit.io](https://share.streamlit.io)** → sign in with GitHub
-2. Click **New app**
-3. Set:
-   - **Repository:** `your-username/sentiment-radar`
-   - **Branch:** `main`
-   - **Main file:** `streamlit_app.py`
-4. Click **Advanced settings** → add Secrets:
-```toml
-YOUTUBE_API_KEY = "AIzaSy..."      # optional
-REDDIT_CLIENT_ID = ""              # optional
-REDDIT_CLIENT_SECRET = ""          # optional
-```
-5. Click **Deploy!**
-
-Your app will be live at `https://your-app-name.streamlit.app`
-
-> **⚠️ RAM Note:** Streamlit Cloud free tier provides 1 GB RAM. TensorFlow + model uses ~850–950 MB. If the app crashes on load, click **Reboot app** in the dashboard — it usually recovers on a clean start.
-
----
-
-## 🎬 Demo
+## 🎬 Dashboard Overview
 
 > **📺 [Watch the full demo on YouTube](https://youtu.be/ZBAwq79opZk)**
 
@@ -295,10 +285,10 @@ The dashboard includes 5 analysis views:
 | Tab | What it shows |
 |---|---|
 | 🌐 **Overall** | Aggregate sentiment donut + platform grouped bar + radar chart |
-| 📊 **By Platform** | Per-platform donut charts with breakdown metrics |
-| 💬 **Comments** | Raw comments filterable by platform and sentiment |
-| ⚖️ **Sentiment Gap** | Positivity score comparison across platforms |
-| 🎯 **Deep Dive** | Confidence distribution histogram + bubble chart + summary table |
+| 📊 **By Platform** | Per-platform donut charts with individual breakdown metrics |
+| 💬 **Comments** | Raw comments filterable by platform and sentiment with confidence scores |
+| ⚖️ **Sentiment Gap** | Positivity score (positive% − negative%) comparison across platforms |
+| 🎯 **Deep Dive** | Confidence distribution histogram + volume vs positivity bubble chart + full summary table |
 
 ---
 
@@ -306,10 +296,10 @@ The dashboard includes 5 analysis views:
 
 | Key | Platform | Where to get | Cost |
 |---|---|---|---|
-| `YOUTUBE_API_KEY` | YouTube | [Google Cloud Console](https://console.cloud.google.com) → YouTube Data API v3 → Credentials | Free (10k units/day) |
+| `YOUTUBE_API_KEY` | YouTube | [Google Cloud Console](https://console.cloud.google.com) → YouTube Data API v3 → Credentials | Free · 10k units/day |
 | `REDDIT_CLIENT_ID` + `REDDIT_CLIENT_SECRET` | Reddit | [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps) → Create App → script | Free |
 
-> Reddit works without credentials via the Pullpush.io archive fallback. YouTube requires a key. HackerNews, Dev.to, and Mastodon need no keys at all.
+> **No key needed for:** HackerNews, Dev.to, Mastodon, and Reddit (falls back to Pullpush.io archive automatically).
 
 ---
 
@@ -318,7 +308,7 @@ The dashboard includes 5 analysis views:
 <details>
 <summary><b>ModuleNotFoundError: No module named 'app'</b></summary>
 
-Run from the project root directory, not from inside `app/`:
+Run from the project root, not from inside `app/`:
 ```bash
 streamlit run streamlit_app.py
 ```
@@ -341,25 +331,30 @@ pip install tf-keras==2.17.0
 <details>
 <summary><b>ModuleNotFoundError: No module named 'keras.preprocessing.text'</b></summary>
 
-This is a pickle compatibility issue with the tokenizer. Make sure you are using `inference.py` from this repo — it includes the sys.modules shim that resolves this automatically.
+Pickle compatibility issue with the tokenizer. Ensure you are using `inference.py` from this repo — it includes a `sys.modules` shim that resolves this automatically.
 </details>
 
 <details>
 <summary><b>Reddit returns 0 comments</b></summary>
 
-Reddit rate-limits unauthenticated scrapers. The app automatically falls back to Pullpush.io archive. If both fail, wait 60 seconds and retry. For consistent results, add Reddit OAuth credentials to `.env`.
+The app automatically falls back to the Pullpush.io archive. If both fail, wait 60 seconds and retry. For consistent fresh results, add Reddit OAuth credentials to `.env`.
 </details>
 
 <details>
-<summary><b>YouTube returns 0 / quota error</b></summary>
+<summary><b>YouTube returns 0 / shows quota error</b></summary>
 
-Free quota is 10,000 units/day (100 units per search = ~100 searches/day). Quota resets at midnight Pacific Time. The app shows a warning in the sidebar when quota is exceeded.
+Free quota is 10,000 units/day (~100 searches/day). Quota resets at midnight Pacific Time. The app shows a warning in the sidebar when quota is exceeded.
 </details>
 
 <details>
-<summary><b>App crashes on Streamlit Cloud (MemoryError)</b></summary>
+<summary><b>LF/CRLF line ending warnings on git add</b></summary>
 
-Click **Reboot app** in your Streamlit Cloud dashboard. If it persists, the free tier RAM is exhausted — contact Streamlit support to request a resource upgrade for ML apps.
+Run the following to apply the `.gitattributes` line ending rules:
+```bash
+git rm -r --cached .
+git add .
+git commit -m "Fix line endings"
+```
 </details>
 
 ---
@@ -368,14 +363,14 @@ Click **Reboot app** in your Streamlit Cloud dashboard. If it persists, the free
 
 | Layer | Technology |
 |---|---|
-| Deep Learning | TensorFlow 2.17 + tf-keras 2.17 (Keras 2 compatibility) |
-| NLP | Custom preprocessing pipeline + NLTK stopwords |
-| Data serialisation | joblib (tokenizer + encoder), H5 (model weights) |
+| Deep Learning | TensorFlow 2.17.1 + tf-keras 2.17.0 (Keras 2 compatibility layer) |
+| NLP | Custom negation-scope preprocessing pipeline + NLTK stopwords |
+| ML Utilities | scikit-learn (LabelEncoder, classification metrics) |
+| Data Serialisation | joblib (tokenizer + encoder) · Keras H5 (model weights) |
 | Dashboard | Streamlit 1.32+ |
 | Visualisation | Plotly |
-| Data | pandas, numpy |
-| Scraping | stdlib urllib (no external scraping libs) |
-| Deployment | Streamlit Community Cloud |
+| Data Processing | pandas · numpy |
+| Scraping | Python stdlib urllib — no external scraping libraries |
 
 ---
 
@@ -387,6 +382,8 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 <div align="center">
 
-Built with 🧠 + ☕ · [⭐ Star this repo](https://github.com/BhaveshN1015/sentiment-radar) if you found it useful
+Built with 🧠 + ☕ by [BhaveshN1015](https://github.com/BhaveshN1015)
+
+[⭐ Star this repo](https://github.com/BhaveshN1015/Sentiment_Radar) if you found it useful
 
 </div>
