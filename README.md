@@ -260,10 +260,7 @@ cp .env.example .env        # Mac / Linux
 Edit `.env` and add your API keys (all optional — app works without them):
 
 ```env
-YOUTUBE_API_KEY=AIzaSy...          # Enables YouTube platform
-REDDIT_CLIENT_ID=abc123            # Improves Reddit results
-REDDIT_CLIENT_SECRET=xyz789
-REDDIT_USER_AGENT=SentimentRadar/1.0
+
 ```
 
 ### 6. Run the app
