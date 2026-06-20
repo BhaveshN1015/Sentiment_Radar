@@ -1,0 +1,21 @@
+#!/bin/bash
+
+for DATE in "2024-12-03" "2024-12-07" "2024-12-11" "2024-12-14" "2024-12-17" "2024-12-19" "2024-12-22" "2024-12-24" "2024-12-27" "2024-12-29"
+do
+  echo "log $DATE" >> activity_log.txt
+  git add activity_log.txt
+  GIT_AUTHOR_DATE="${DATE}T10:00:00" \
+  GIT_COMMITTER_DATE="${DATE}T10:00:00" \
+  git commit -m "daily update: ${DATE}"
+done
+
+for DATE in "2025-08-02" "2025-08-05" "2025-08-08" "2025-08-12" "2025-08-15" "2025-08-18" "2025-08-21" "2025-08-23" "2025-08-26" "2025-08-29"
+do
+  echo "log $DATE" >> activity_log.txt
+  git add activity_log.txt
+  GIT_AUTHOR_DATE="${DATE}T10:00:00" \
+  GIT_COMMITTER_DATE="${DATE}T10:00:00" \
+  git commit -m "daily update: ${DATE}"
+done
+
+echo "Done! Now run: git push origin main"

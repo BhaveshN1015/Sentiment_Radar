@@ -26,7 +26,7 @@
 
 ## 📌 Overview
 
-
+**Sentiment Radar** is an end-to-end NLP system that scrapes comments from multiple social media platforms on any topic, classifies each comment as **positive**, **neutral**, or **negative** using a custom-trained deep learning model, and presents results in an interactive dark-theme dashboard with rich visualisations.
 
 Unlike generic sentiment APIs, this model was trained specifically on social media language — handling slang, negation (`"not bad"` → positive), sarcasm markers, and informal text that breaks most off-the-shelf classifiers. The system is **on-demand** — every analysis is triggered manually by searching a topic, fetching a fresh batch of comments across platforms.
 
