@@ -47,6 +47,26 @@ Unlike generic sentiment APIs, this model was trained specifically on social med
 | Dev.to | None | ✅ Active |
 | YouTube | Free API key | ✅ Optional |
 | Mastodon | None | ✅ Optional |
+| TweetClaw export | Saved JSON, JSONL, NDJSON, or CSV | ✅ Optional |
+
+### TweetClaw export workflow
+
+[TweetClaw](https://github.com/Xquik-dev/tweetclaw) can provide reviewed X/Twitter
+source posts as an offline export before model scoring. Save the export locally,
+then pass it to the scraper orchestrator as another platform:
+
+```python
+from app.scraper import scrape_all
+
+raw = scrape_all(
+    "product launch feedback",
+    comments_per_platform=50,
+    tweetclaw_export_path="exports/tweetclaw-launch.jsonl",
+)
+```
+
+The helper accepts TweetClaw JSON, JSONL, NDJSON, and CSV exports and only uses
+post text for Sentiment Radar inference.
 
 ---
 
