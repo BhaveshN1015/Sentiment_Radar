@@ -22,6 +22,8 @@ import urllib.request
 from pathlib import Path
 from typing import Optional
 
+from app.tweetclaw_import import load_tweetclaw_export
+
 logger = logging.getLogger(__name__)
 NUM_COMMENTS = 50
 
@@ -340,6 +342,7 @@ def scrape_all(
     comments_per_platform: int = NUM_COMMENTS,
     youtube_api_key: Optional[str] = None,    # kept for API compat, ignored
     include_twitter: bool = False,             # now controls Bluesky
+    tweetclaw_export_path: Optional[str] = None,
 ) -> dict:
     """
     Scrape all platforms.
@@ -358,6 +361,11 @@ def scrape_all(
         scrapers["YouTube"] = lambda: scrape_youtube(topic, comments_per_platform)
     if include_twitter:
         scrapers["Bluesky"] = lambda: scrape_bluesky(topic, comments_per_platform)
+    if tweetclaw_export_path:
+        scrapers["TweetClaw"] = lambda: load_tweetclaw_export(
+            tweetclaw_export_path,
+            comments_per_platform,
+        )
 
     results = {}
     for platform, fn in scrapers.items():
